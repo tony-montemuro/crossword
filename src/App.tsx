@@ -3,18 +3,17 @@ import WordList from './components/WordList';
 import AlgorithmDiagnostics from './components/AlgorithmDiagnostics';
 import AlgorithmControls from './components/AlgorithmControls';
 import { useAlgorithmState } from './hooks/useAlgorithmState';
-import { AlgorithmController } from './algorithms/AlgorithmController';
 
 function App() {
   const [algorithmState, algorithmActions] = useAlgorithmState();
 
   const testBoard = [
-    ['C', 'A', 'T'],
-    ['A', 'R', 'E'],
+    ['C', 'A', 'U'],
+    ['P', 'R', 'A'],
     ['R', 'E', 'D']
   ];
 
-  const testWords = ['CAT', 'ARE', 'RED'];
+  const testWords = ['CAR', 'RAD', 'ERA'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-500 to-blue-600 flex flex-col items-center justify-center gap-6 p-8">

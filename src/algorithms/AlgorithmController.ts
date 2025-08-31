@@ -4,139 +4,143 @@ import type { AlgorithmStep } from '../types/AlgorithmStep';
 export type AlgorithmGenerator = Generator<AlgorithmStep, void, unknown>;
 
 export class AlgorithmController {
-  private intervalId: number | null = null;
-  private generator: AlgorithmGenerator | null = null;
-  private isRunning = false;
-  private isPaused = false;
-  private isCompleted = false;
-  private speed = 500;
-  private actions: AlgorithmActions;
+    private intervalId: number | null = null;
+    private generator: AlgorithmGenerator | null = null;
+    private isRunning = false;
+    private isPaused = false;
+    private isCompleted = false;
+    private speed = 500;
+    private actions: AlgorithmActions;
 
-  constructor(actions: AlgorithmActions) {
-    this.actions = actions;
-  }
-
-  startAlgorithm(generator: AlgorithmGenerator, speed = 500): void {
-    this.stop();
-
-    this.generator = generator;
-    this.speed = speed;
-    this.isRunning = true;
-    this.isPaused = false;
-
-    this.actions.start();
-    this.executeNextStep();
-  }
-
-  pause(): void {
-    if (this.isRunning && !this.isPaused) {
-      this.isPaused = true;
-      this.actions.pause();
-
-      if (this.intervalId) {
-        clearTimeout(this.intervalId);
-        this.intervalId = null;
-      }
-    }
-  }
-
-  resume(): void {
-    if (this.isRunning && this.isPaused) {
-      this.isPaused = false;
-      this.actions.resume();
-      this.executeNextStep();
-    }
-  }
-
-  stop(): void {
-    this.isRunning = false;
-    this.isPaused = false;
-
-    if (this.intervalId) {
-      clearTimeout(this.intervalId);
-      this.intervalId = null;
+    constructor(actions: AlgorithmActions) {
+        this.actions = actions;
     }
 
-    this.generator = null;
-  }
+    startAlgorithm(generator: AlgorithmGenerator, speed = 500, isPaused: boolean = false): void {
+        this.stop();
 
-  reset(): void {
-    this.stop();
-    this.actions.reset();
-  }
+        this.generator = generator;
+        this.speed = speed;
+        this.isRunning = true;
+        this.isPaused = isPaused;
 
-  stepOnce(): void {
-    if (this.generator && !this.isRunning) {
-      const { value, done } = this.generator.next();
-
-      if (done) {
-        this.handleCompletion();
-      } else {
-        this.applyStep(value);
-      }
-    }
-  }
-
-  setSpeed(milliseconds: number): void {
-    this.speed = Math.max(50, milliseconds); // Minimum 50ms
-  }
-
-  getExecutionState(): { isRunning: boolean; isPaused: boolean; isCompleted: boolean; speed: number } {
-    return {
-      isRunning: this.isRunning,
-      isPaused: this.isPaused,
-      isCompleted: this.isCompleted,
-      speed: this.speed
-    };
-  }
-
-  private executeNextStep(): void {
-    if (!this.generator || !this.isRunning || this.isPaused) {
-      return;
+        this.actions.start(isPaused);
+        if (!isPaused) {
+            this.executeNextStep();
+        } else {
+            this.stepOnce();
+        }
     }
 
-    const { value, done } = this.generator.next();
+    pause(): void {
+        if (this.isRunning && !this.isPaused) {
+            this.isPaused = true;
+            this.actions.pause();
 
-    if (done) {
-      this.handleCompletion();
-    } else {
-      this.applyStep(value);
-
-      // Schedule next step
-      this.intervalId = setTimeout(() => {
-        this.executeNextStep();
-      }, this.speed);
-    }
-  }
-
-  private applyStep(step: AlgorithmStep): void {
-    this.actions.incrementStep();
-    this.actions.setDescription(step.description);
-
-    if (step.stackVals !== undefined) {
-      this.actions.pushToStacks(step.stackVals);
-    }
-    if (step.isBacktracking !== undefined) {
-      this.actions.setBacktracking(step.isBacktracking);
-    }
-    if (step.word !== undefined) {
-      this.actions.addFoundWord(step.word);
-    }
-    if (step.popStackVals !== undefined && step.popStackVals) {
-      this.actions.popFromStacks();
-    }
-  }
-
-  private handleCompletion(): void {
-    this.isRunning = false;
-    this.isPaused = false;
-
-    if (this.intervalId) {
-      clearTimeout(this.intervalId);
-      this.intervalId = null;
+            if (this.intervalId) {
+                clearTimeout(this.intervalId);
+                this.intervalId = null;
+            }
+        }
     }
 
-    this.actions.complete();
-    this.isCompleted = true;
-  }
+    resume(): void {
+        if (this.isRunning && this.isPaused) {
+            this.isPaused = false;
+            this.actions.resume();
+            this.executeNextStep();
+        }
+    }
+
+    reset(): void {
+        this.stop();
+        this.actions.reset();
+    }
+
+    stepOnce(): void {
+        if (this.generator && this.isPaused) {
+            const { value, done } = this.generator.next();
+
+            if (done) {
+                this.handleCompletion();
+            } else {
+                this.applyStep(value);
+            }
+        }
+    }
+
+    setSpeed(milliseconds: number): void {
+        this.speed = Math.max(50, milliseconds); // Minimum 50ms
+    }
+
+    getExecutionState(): { isRunning: boolean; isPaused: boolean; isCompleted: boolean; speed: number } {
+        return {
+            isRunning: this.isRunning,
+            isPaused: this.isPaused,
+            isCompleted: this.isCompleted,
+            speed: this.speed
+        };
+    }
+
+    private executeNextStep(): void {
+        if (!this.generator || !this.isRunning || this.isPaused) {
+            return;
+        }
+
+        const { value, done } = this.generator.next();
+
+        if (done) {
+            this.handleCompletion();
+        } else {
+            this.applyStep(value);
+
+            // Schedule next step
+            this.intervalId = setTimeout(() => {
+                this.executeNextStep();
+            }, this.speed);
+        }
+    }
+
+    private stop(): void {
+        this.isRunning = false;
+        this.isPaused = false;
+
+        if (this.intervalId) {
+            clearTimeout(this.intervalId);
+            this.intervalId = null;
+        }
+
+        this.generator = null;
+    }
+
+    private applyStep(step: AlgorithmStep): void {
+        this.actions.setDescription(step.description);
+
+        if (step.stackVals !== undefined) {
+            this.actions.incrementRecursiveCount();
+            this.actions.pushToStacks(step.stackVals);
+        }
+        if (step.isBacktracking !== undefined) {
+            this.actions.setBacktracking(step.isBacktracking);
+        }
+        if (step.word !== undefined) {
+            this.actions.addFoundWord(step.word);
+        }
+        if (step.popStackVals !== undefined && step.popStackVals) {
+            this.actions.popFromStacks();
+        }
+    }
+
+    private handleCompletion(): void {
+        this.isRunning = false;
+        this.isPaused = false;
+
+        if (this.intervalId) {
+            clearTimeout(this.intervalId);
+            this.intervalId = null;
+        }
+
+        this.actions.complete();
+        this.isCompleted = true;
+    }
 }

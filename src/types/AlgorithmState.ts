@@ -13,7 +13,7 @@ interface AlgorithmState {
     description: string,
     stacks: Stacks,
     foundWords: string[];
-    stepCount: number;
+    recursiveCount: number;
     isBacktracking: boolean;
     isComplete: boolean;
     isRunning: boolean;
@@ -22,7 +22,7 @@ interface AlgorithmState {
 
 export interface AlgorithmActions {
     // Control flow
-    start: () => void;
+    start: (isPaused: boolean) => void;
     pause: () => void;
     resume: () => void;
     reset: () => void;
@@ -34,14 +34,14 @@ export interface AlgorithmActions {
     popFromStacks: () => void;
     addFoundWord: (word: string) => void;
     setBacktracking: (isBacktracking: boolean) => void;
-    incrementStep: () => void;
+    incrementRecursiveCount: () => void;
 }
 
 export const initialAlgorithmState: AlgorithmState = {
     description: '',
     stacks: { positions: [], words: [], trieNodes: [] },
     foundWords: [],
-    stepCount: 0,
+    recursiveCount: 0,
     isBacktracking: false,
     isComplete: false,
     isRunning: false,

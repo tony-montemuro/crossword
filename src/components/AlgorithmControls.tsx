@@ -24,8 +24,12 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
     }
   };
 
-  const handleStop = () => {
-    controller.stop();
+  const handleStep = () => {
+    if (state.isRunning) {
+      controller.stepOnce();
+    } else {
+      controller.startAlgorithm(algorithmGenerator, 1000, true);
+    }
   };
 
   const handleReset = () => {
@@ -77,22 +81,23 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
           { getPlayPauseButtonText() }
         </button>
 
-        {/* Stop Button */ }
+        {/* Step Button */ }
         <button
-          onClick={ handleStop }
-          disabled={ !state.isRunning }
+          onClick={ handleStep }
+          disabled={ state.isComplete || (state.isRunning && !state.isPaused) }
           className={ `
-                        flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200
-                        ${!state.isRunning
+    flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200
+    ${(state.isComplete || (state.isRunning && !state.isPaused))
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg'
+              : 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg'
             }
-                    `}
+  `}
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
+            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            <path fillRule="evenodd" d="M13 17a1 1 0 102 0V3a1 1 0 10-2 0v14z" clipRule="evenodd" />
           </svg>
-          Stop
+          Step
         </button>
 
         {/* Reset Button */ }
