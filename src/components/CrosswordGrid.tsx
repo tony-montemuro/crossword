@@ -18,12 +18,12 @@ export default function CrosswordGrid({ grid, algorithmState }: CrosswordGridPro
 
     // Current position - bright highlight with pulsing animation
     const currentPosition = algorithmState.stacks.positions.at(-1);
-    if (currentPosition && currentPosition[0] === rowIndex && currentPosition[1] === colIndex) {
+    if (currentPosition && currentPosition[0] === colIndex && currentPosition[1] === rowIndex) {
       return `${baseClasses} border-yellow-400 bg-yellow-200 text-gray-800 animate-pulse ring-2 ring-yellow-400`;
     }
 
     // Current path - show the active exploration path
-    if (algorithmState.stacks.positions.some(pos => pos[0] === rowIndex && pos[1] === colIndex)) {
+    if (algorithmState.stacks.positions.some(pos => pos[0] === colIndex && pos[1] === rowIndex)) {
       return `${baseClasses} border-blue-400 bg-blue-100 text-gray-800`;
     }
 

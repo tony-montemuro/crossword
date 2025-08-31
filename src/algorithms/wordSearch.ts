@@ -12,100 +12,101 @@ import type { AlgorithmGenerator } from './AlgorithmController';
  * Uses a generator pattern to yield intermediate states for visualization.
  */
 export function* wordSearch(
-    board: string[][],
-    words: string[]
+  board: string[][],
+  words: string[]
 ): AlgorithmGenerator {
-    const VISITED_CHAR = "#";
-    const trie = new Trie();
-    trie.buildFromWords(words);
+  const VISITED_CHAR = "#";
+  const trie = new Trie();
+  trie.buildFromWords(words);
 
+  yield {
+    description: 'Built Trie from word list'
+  };
+
+  const m = board.length;
+  const n = board[0]?.length || 0;
+  let count: number = 0;
+
+  function* dfs(
+    x: number,
+    y: number,
+    node: TrieNode,
+    word: string,
+  ): AlgorithmGenerator {
     yield {
-        description: 'Built Trie from word list'
+      stackVals: {
+        position: [x, y],
+        trieNode: node,
+        word: word
+      },
+      description: `Exploring position ([${x},${y}]) with word "${word}"`
     };
 
-    const m = board.length;
-    const n = board[0]?.length || 0;
-    let count: number = 0;
-
-    function* dfs(
-        x: number,
-        y: number,
-        node: TrieNode,
-        word: string,
-    ): AlgorithmGenerator {
-        yield {
-            stackVals: {
-                position: [x, y],
-                trieNode: node,
-                word: word
-            },
-            description: `Exploring position ([${x},${y}]) with word "${word}"`
-        };
-
-        if (x < 0 || y < 0 || y === board.length || x === board[y].length) {
-            yield {
-                description: `Position [${x},${y}] is out-of-bounds - cannot continue down path`,
-                popStackVals: true
-            }
-            return;
-        }
-
-        if (board[y][x] === VISITED_CHAR) {
-            yield {
-                description: `Position [${x},${y}] has already been visited - cannot continue down path`,
-                popStackVals: true
-            }
-        }
-
-        const next = node.children.get(board[y][x]);
-        if (!next) {
-            yield {
-                description: `Character '${board[y][x]}' not child of current TrieNode - cannot continue down path`,
-                popStackVals: true
-            };
-            return;
-        }
-
-        const c = board[y][x];
-        word += c;
-
-        if (next.isEndOfWord) {
-            next.isEndOfWord = true;
-            yield {
-                description: `Word "${word}" found, completed by '${board[y][x]}'!`,
-                word: word
-            }
-            count++;
-        }
-
-        board[y][x] = VISITED_CHAR;
-
-        yield* dfs(x, y + 1, next, word);
-        yield* dfs(x + 1, y, next, word);
-        yield* dfs(x, y - 1, next, word);
-        yield* dfs(x - 1, y, next, word);
-
-        board[y][x] = c;
-        yield {
-            description: `Backtracking from position [${x},${y}].`,
-            popStackVals: true
-        }
+    if (x < 0 || y < 0 || y === board.length || x === board[y].length) {
+      yield {
+        description: `Position [${x},${y}] is out-of-bounds - cannot continue down path`,
+        popStackVals: true
+      }
+      return;
     }
 
-    for (let y = 0; y < m; y++) {
-        for (let x = 0; x < n; x++) {
-            yield {
-                description: `Starting search from position [${x},${y}]`
-            };
-
-            yield* dfs(x, y, trie.root, '');
-        }
+    if (board[y][x] === VISITED_CHAR) {
+      yield {
+        description: `Position [${x},${y}] has already been visited - cannot continue down path`,
+        popStackVals: true
+      }
+      return;
     }
 
-    // Algorithm complete
+    const next = node.children.get(board[y][x]);
+    if (!next) {
+      yield {
+        description: `Character '${board[y][x]}' not child of current TrieNode - cannot continue down path`,
+        popStackVals: true
+      };
+      return;
+    }
+
+    const c = board[y][x];
+    word += c;
+
+    if (next.isEndOfWord) {
+      next.isEndOfWord = false;
+      yield {
+        description: `Word "${word}" found, completed by '${board[y][x]}'!`,
+        word: word
+      }
+      count++;
+    }
+
+    board[y][x] = VISITED_CHAR;
+
+    yield* dfs(x, y + 1, next, word);
+    yield* dfs(x + 1, y, next, word);
+    yield* dfs(x, y - 1, next, word);
+    yield* dfs(x - 1, y, next, word);
+
+    board[y][x] = c;
     yield {
-        description: `Search complete! Found ${count} words.`
-    };
+      description: `Backtracking from position [${x},${y}].`,
+      popStackVals: true
+    }
+  }
+
+  for (let y = 0; y < m; y++) {
+    for (let x = 0; x < n; x++) {
+      yield {
+        description: `Starting search from position [${x},${y}]`
+      };
+
+      yield* dfs(x, y, trie.root, '');
+    }
+  }
+
+  // Algorithm complete
+  yield {
+    description: `Search complete! Found ${count} words.`
+  };
 }
 
 

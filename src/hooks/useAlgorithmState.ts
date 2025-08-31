@@ -4,78 +4,78 @@ import type { AlgorithmState, AlgorithmActions } from "../types/AlgorithmState";
 import type { StackVals } from '../types/AlgorithmStep';
 
 export function useAlgorithmState(): [AlgorithmState, AlgorithmActions] {
-    const [state, setState] = useState<AlgorithmState>(initialAlgorithmState);
+  const [state, setState] = useState<AlgorithmState>(initialAlgorithmState);
 
-    const actions: AlgorithmActions = {
-        start: useCallback(() => {
-            setState(prev => ({
-                ...prev,
-                isRunning: true,
-                isPaused: false,
-                isComplete: false,
-                stepCount: 0
-            }));
-        }, []),
+  const actions: AlgorithmActions = {
+    start: useCallback(() => {
+      setState(prev => ({
+        ...prev,
+        isRunning: true,
+        isPaused: false,
+        isComplete: false,
+        stepCount: 0
+      }));
+    }, []),
 
-        pause: useCallback(() => {
-            setState(prev => ({ ...prev, isPaused: true }));
-        }, []),
+    pause: useCallback(() => {
+      setState(prev => ({ ...prev, isPaused: true }));
+    }, []),
 
-        resume: useCallback(() => {
-            setState(prev => ({ ...prev, isPaused: false }));
-        }, []),
+    resume: useCallback(() => {
+      setState(prev => ({ ...prev, isPaused: false }));
+    }, []),
 
-        reset: useCallback(() => {
-            setState(initialAlgorithmState);
-        }, []),
+    reset: useCallback(() => {
+      setState(initialAlgorithmState);
+    }, []),
 
-        complete: useCallback(() => {
-            setState(prev => ({ ...prev, isComplete: true }));
-        }, []),
+    complete: useCallback(() => {
+      setState(prev => ({ ...prev, isComplete: true }));
+    }, []),
 
-        setDescription: useCallback((desc: string) => {
-            setState(prev => ({ ...prev, desc }));
-        }, []),
+    setDescription: useCallback((desc: string) => {
+      setState(prev => ({ ...prev, description: desc }));
+    }, []),
 
-        pushToStacks: useCallback((vals: StackVals) => {
-            setState(prev => ({
-                ...prev,
-                stacks: {
-                    positions: [...prev.stacks.positions, vals.position],
-                    words: [...prev.stacks.words, vals.word],
-                    trieNodes: [...prev.stacks.trieNodes, vals.trieNode]
-                }
-            }));
-        }, []),
+    pushToStacks: useCallback((vals: StackVals) => {
+      setState(prev => ({
+        ...prev,
+        stacks: {
+          positions: [...prev.stacks.positions, vals.position],
+          words: [...prev.stacks.words, vals.word],
+          trieNodes: [...prev.stacks.trieNodes, vals.trieNode]
+        }
+      }));
+    }, []),
 
-        popFromStacks: useCallback(() => {
-            setState(prev => ({
-                ...prev,
-                stacks: {
-                    positions: prev.stacks.positions.slice(0, -1),
-                    words: prev.stacks.words.slice(0, -1),
-                    trieNodes: prev.stacks.trieNodes.slice(0, -1)
-                }
-            }));
-        }, []),
+    popFromStacks: useCallback(() => {
+      setState(prev => ({
+        ...prev,
+        stacks: {
+          positions: prev.stacks.positions.slice(0, -1),
+          words: prev.stacks.words.slice(0, -1),
+          trieNodes: prev.stacks.trieNodes.slice(0, -1)
+        }
+      }));
+    }, []),
 
-        addFoundWord: useCallback((word: string) => {
-            setState(prev => {
-                if (!prev.foundWords.includes(word)) {
-                    return { ...prev, foundWords: [...prev.foundWords, word] };
-                }
-                return prev;
-            });
-        }, []),
+    addFoundWord: useCallback((word: string) => {
+      setState(prev => {
+        if (!prev.foundWords.includes(word)) {
+          return { ...prev, foundWords: [...prev.foundWords, word] };
+        }
+        return prev;
+      });
+    }, []),
 
-        setBacktracking: useCallback((isBacktracking: boolean) => {
-            setState(prev => ({ ...prev, isBacktracking }));
-        }, []),
+    setBacktracking: useCallback((isBacktracking: boolean) => {
+      setState(prev => ({ ...prev, isBacktracking }));
+    }, []),
 
-        incrementStep: useCallback(() => {
-            setState(prev => ({ ...prev, stepCount: prev.stepCount + 1 }));
-        }, []),
-    };
+    incrementStep: useCallback(() => {
+      setState(prev => ({ ...prev, stepCount: prev.stepCount + 1 }));
+    }, []),
+  };
 
-    return [state, actions];
+  return [state, actions];
 }
