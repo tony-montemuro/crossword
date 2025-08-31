@@ -61,7 +61,7 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+    <div>
       <div className="flex items-center justify-center gap-4">
         {/* Play/Pause Button */ }
         <button

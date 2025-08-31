@@ -1,6 +1,7 @@
 import { Trie } from '../utils/Trie';
 import type { TrieNode } from '../utils/Trie';
 import type { AlgorithmGenerator } from './AlgorithmController';
+import { serializePosition } from '../types/Position';
 
 /**
  * Word Search II Algorithm using Trie + Backtracking with Visualization
@@ -39,12 +40,12 @@ export function* wordSearch(
                 trieNode: node,
                 word: word
             },
-            description: `Exploring position ([${x},${y}]) with word "${word}"`
+            description: `Exploring position (${serializePosition([x, y])}) with word "${word}"`
         };
 
         if (x < 0 || y < 0 || y === board.length || x === board[y].length) {
             yield {
-                description: `Backtracking from position [${x},${y}]: out-of-bounds`,
+                description: `Backtracking from position ${serializePosition([x, y])}: out-of-bounds`,
                 popStackVals: true
             }
             return;
@@ -52,7 +53,7 @@ export function* wordSearch(
 
         if (board[y][x] === VISITED_CHAR) {
             yield {
-                description: `Backtracking from position [${x},${y}]: already been visited`,
+                description: `Backtracking from position ${serializePosition([x, y])}: already been visited`,
                 popStackVals: true
             }
             return;
@@ -61,7 +62,7 @@ export function* wordSearch(
         const next = node.children.get(board[y][x]);
         if (!next) {
             yield {
-                description: `Backtracking from position [${x},${y}]: '${board[y][x]}' not child of current TrieNode`,
+                description: `Backtracking from position ${serializePosition([x, y])}: '${board[y][x]}' not child of current TrieNode`,
                 popStackVals: true
             };
             return;
@@ -88,7 +89,7 @@ export function* wordSearch(
 
         board[y][x] = c;
         yield {
-            description: `Backtracking from position [${x},${y}]: exhaused all paths`,
+            description: `Backtracking from position ${serializePosition([x, y])}: exhaused all paths`,
             popStackVals: true
         }
     }
@@ -96,7 +97,7 @@ export function* wordSearch(
     for (let y = 0; y < m; y++) {
         for (let x = 0; x < n; x++) {
             yield {
-                description: `Starting search from position [${x},${y}]`
+                description: `Starting search from position ${serializePosition([x, y])}`
             };
 
             yield* dfs(x, y, trie.root, '');
@@ -105,7 +106,7 @@ export function* wordSearch(
 
     // Algorithm complete
     yield {
-        description: `Search complete! Found ${count} words.`
+        description: `Algorithm complete! Found ${count} words.`
     };
 }
 

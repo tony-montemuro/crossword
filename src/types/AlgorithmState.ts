@@ -1,7 +1,6 @@
 import type { TrieNode } from '../utils/Trie';
 import type { StackVals } from './AlgorithmStep';
-
-export type Position = [number, number];
+import type { Position } from './Position';
 
 interface Stacks {
     positions: Position[],

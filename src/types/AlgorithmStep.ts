@@ -1,5 +1,5 @@
 import type { TrieNode } from '../utils/Trie';
-import type { Position } from './AlgorithmState';
+import type { Position } from './Position';
 
 export interface StackVals {
     position: Position,

@@ -1,4 +1,4 @@
-import type { Position } from '../types/AlgorithmState';
+import type { Position } from '../types/Position';
 
 export class PositionSet {
     private positions = new Set<string>();

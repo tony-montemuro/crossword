@@ -1,8 +1,9 @@
 import CrosswordGrid from './components/CrosswordGrid';
-import WordList from './components/WordList';
 import AlgorithmDiagnostics from './components/AlgorithmDiagnostics';
 import AlgorithmControls from './components/AlgorithmControls';
 import { useAlgorithmState } from './hooks/useAlgorithmState';
+import AlgorithmDashboard from './components/AlgorithmDashboard';
+import AlgorithmWords from './components/AlgorithmWords';
 
 function App() {
   const [algorithmState, algorithmActions] = useAlgorithmState();
@@ -18,22 +19,28 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-500 to-blue-600 flex flex-col items-center justify-center gap-6 p-8">
       <div className="w-full max-w-4xl">
-        <AlgorithmDiagnostics
-          algorithmState={ algorithmState }
-          totalWords={ testWords.length }
-        />
+        <AlgorithmDashboard>
+          <AlgorithmDiagnostics
+            algorithmState={ algorithmState }
+            wordsLength={ testWords.length }
+          />
+          <AlgorithmWords
+            algorithmState={ algorithmState }
+            wordsToFind={ testWords }
+          />
+          <AlgorithmControls
+            state={ algorithmState }
+            actions={ algorithmActions }
+            board={ testBoard }
+            words={ testWords }
+          />
 
-        <AlgorithmControls
-          state={ algorithmState }
-          actions={ algorithmActions }
-          board={ testBoard }
-          words={ testWords }
-        />
-      </div>
+        </AlgorithmDashboard>
 
-      <div className="flex items-center justify-center gap-8">
-        <CrosswordGrid grid={ testBoard } algorithmState={ algorithmState } />
-        <WordList words={ testWords } algorithmState={ algorithmState } />
+
+        <div className="w-full flex justify-center">
+          <CrosswordGrid grid={ testBoard } algorithmState={ algorithmState } />
+        </div>
       </div>
     </div>
   )
