@@ -15,7 +15,7 @@ function App() {
   const currentBoard = BOARD_CONFIGS.find(config => config.id === selectedBoardId)!;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-500 to-blue-600 flex flex-col items-center justify-center gap-6 p-8">
+    <div className="min-h-screen bg-radial-[at_50%_75%] from-gray-700 to-stone-900 flex flex-col items-center justify-center gap-6 p-8">
       <div className="w-full max-w-4xl">
         <AlgorithmDashboard>
           <AlgorithmInformation />
