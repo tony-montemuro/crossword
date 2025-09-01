@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { AlgorithmController } from '../algorithms/AlgorithmController';
 import { wordSearch } from '../algorithms/wordSearch';
 import type { AlgorithmActions, AlgorithmState } from '../types/AlgorithmState';
@@ -11,8 +11,16 @@ interface AlgorithmControlsProps {
 }
 
 export default function AlgorithmControls({ state, actions, board, words }: AlgorithmControlsProps) {
+  const [SPEED_SLOW, SPEED_NORMAL, SPEED_FAST] = [2000, 1000, 500];
+
   const controller = useMemo(() => new AlgorithmController(actions), []);
+  const [speed, setSpeed] = useState<number>(SPEED_NORMAL);
   const algorithmGenerator = wordSearch(board, words);
+
+  const handleSpeedChange = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    controller.reset();
+    setSpeed(parseInt(e.currentTarget.dataset.speed ?? `${SPEED_NORMAL}`));
+  }
 
   const handlePlayPause = () => {
     if (state.isRunning && !state.isPaused) {
@@ -20,7 +28,7 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
     } else if (state.isPaused) {
       controller.resume();
     } else {
-      controller.startAlgorithm(algorithmGenerator, 1000);
+      controller.startAlgorithm(algorithmGenerator, speed);
     }
   };
 
@@ -28,7 +36,7 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
     if (state.isRunning) {
       controller.stepOnce();
     } else {
-      controller.startAlgorithm(algorithmGenerator, 1000, true);
+      controller.startAlgorithm(algorithmGenerator, speed, true);
     }
   };
 
@@ -61,63 +69,106 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-center gap-4">
-        {/* Play/Pause Button */ }
-        <button
-          onClick={ handlePlayPause }
-          disabled={ state.isComplete }
-          className={ `
-                        flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200
-                        ${state.isComplete
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : state.isRunning && !state.isPaused
-                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg'
-                : 'bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg'
-            }
-                    `}
-        >
-          { getPlayPauseIcon() }
-          { getPlayPauseButtonText() }
-        </button>
+    <div className="flex flex-row justify-between">
 
-        {/* Step Button */ }
-        <button
-          onClick={ handleStep }
-          disabled={ state.isComplete || (state.isRunning && !state.isPaused) }
-          className={ `
-    flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200
-    ${(state.isComplete || (state.isRunning && !state.isPaused))
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg'
-            }
-  `}
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            <path fillRule="evenodd" d="M13 17a1 1 0 102 0V3a1 1 0 10-2 0v14z" clipRule="evenodd" />
-          </svg>
-          Step
-        </button>
-
-        {/* Reset Button */ }
-        <button
-          onClick={ handleReset }
-          className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-gray-500 hover:bg-gray-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-          </svg>
-          Reset
-        </button>
+      {/* Speed buttons */ }
+      <div>
+        <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Speed</h3>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            data-speed={ SPEED_SLOW }
+            onClick={ (e) => handleSpeedChange(e) }
+            className={ `
+        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        ${speed === SPEED_SLOW
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
+              }
+      `}
+          >
+            Slow
+          </button>
+          <button
+            data-speed={ SPEED_NORMAL }
+            onClick={ (e) => handleSpeedChange(e) }
+            className={ `
+        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        ${speed === SPEED_NORMAL
+                ? 'bg-blue-500 text-white shadow-md border-transparent'
+                : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
+              }
+      `}
+          >
+            Normal
+          </button>
+          <button
+            data-speed={ SPEED_FAST }
+            onClick={ (e) => handleSpeedChange(e) }
+            className={ `
+        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        ${speed === SPEED_FAST
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
+              }
+      `}
+          >
+            Fast
+          </button>
+        </div>
       </div>
 
-      {/* Status Text */ }
-      { state.isComplete && (
-        <div className="text-center mt-3 text-sm text-gray-600">
-          Algorithm completed! Use Reset to start over.
+      <div className="flex flex-col">
+        {/* Play/Pause Button */ }
+        <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Control</h3>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={ handlePlayPause }
+            disabled={ state.isComplete }
+            className={ `
+                        flex items-center gap-2 px-2 py-1 rounded-lg font-medium transition-all duration-200
+                        ${state.isComplete
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : state.isRunning && !state.isPaused
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg'
+                  : 'bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg'
+              }
+                    `}
+          >
+            { getPlayPauseIcon() }
+            { getPlayPauseButtonText() }
+          </button>
+
+          {/* Step Button */ }
+          <button
+            onClick={ handleStep }
+            disabled={ state.isComplete || (state.isRunning && !state.isPaused) }
+            className={ `
+    flex items-center gap-2 px-2 py-1 rounded-lg font-medium transition-all duration-200
+    ${(state.isComplete || (state.isRunning && !state.isPaused))
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg'
+              }
+  `}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+              <path fillRule="evenodd" d="M13 17a1 1 0 102 0V3a1 1 0 10-2 0v14z" clipRule="evenodd" />
+            </svg>
+            Step
+          </button>
+
+          {/* Reset Button */ }
+          <button
+            onClick={ handleReset }
+            className="flex items-center gap-2 px-2 py-1 rounded-lg font-medium bg-gray-500 hover:bg-gray-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+            </svg>
+            Reset
+          </button>
         </div>
-      ) }
+      </div>
     </div>
   );
 }
