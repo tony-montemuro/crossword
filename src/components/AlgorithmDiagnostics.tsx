@@ -43,7 +43,7 @@ export default function AlgorithmDiagnostics({ algorithmState, wordsLength }: Pr
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Algorithm Status */ }
         <div className="space-y-2">
           <h3 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">Algorithm Status</h3>
