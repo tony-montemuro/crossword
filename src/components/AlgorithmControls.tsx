@@ -87,7 +87,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
             data-speed={ SPEED_VERY_SLOW }
             onClick={ (e) => handleSpeedChange(e) }
             className={ `
-        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        px-2 h-10 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_VERY_SLOW
                 ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
@@ -101,7 +101,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
             data-speed={ SPEED_SLOW }
             onClick={ (e) => handleSpeedChange(e) }
             className={ `
-        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        px-2 h-10 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_SLOW
                 ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
@@ -114,7 +114,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
             data-speed={ SPEED_NORMAL }
             onClick={ (e) => handleSpeedChange(e) }
             className={ `
-        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        px-2 h-10 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_NORMAL
                 ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
@@ -127,7 +127,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
             data-speed={ SPEED_FAST }
             onClick={ (e) => handleSpeedChange(e) }
             className={ `
-        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        px-2 h-10 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_FAST
                 ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
@@ -140,7 +140,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
             data-speed={ SPEED_VERY_FAST }
             onClick={ (e) => handleSpeedChange(e) }
             className={ `
-        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        px-2 h-10 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_VERY_FAST
                 ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
@@ -152,27 +152,6 @@ export default function AlgorithmControls({ state, actions, board, words, select
 
         </div>
       </div>
-      <div>
-        <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Board Size</h3>
-        <div className="flex items-center justify-center gap-2">
-          { BOARD_CONFIGS.map((config) => (
-            <button
-              data-size={ config.id }
-              key={ config.id }
-              onClick={ (e) => handleSizeChange(e) }
-              className={ `
-          px-3 py-2 rounded-lg font-medium transition-all duration-200 text-sm
-          ${selectedBoardId === config.id
-                  ? 'bg-purple-500 text-white shadow-md border border-transparent'
-                  : 'bg-white text-gray-600 border border-gray-300 hover:border-purple-400 hover:text-purple-600'
-                }
-        `}
-            >
-              { config.name }
-            </button>
-          )) }
-        </div>
-      </div>
 
       {/* Control buttons */ }
       <div className="flex flex-col">
@@ -182,7 +161,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
             onClick={ handlePlayPause }
             disabled={ state.isComplete }
             className={ `
-                        flex items-center gap-2 px-2 py-1 rounded-lg font-medium transition-all duration-200
+                        flex items-center gap-2 px-2 h-10 rounded-lg font-medium transition-all duration-200
                         ${state.isComplete
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : state.isRunning && !state.isPaused
@@ -199,7 +178,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
             onClick={ handleStep }
             disabled={ state.isComplete || (state.isRunning && !state.isPaused) }
             className={ `
-    flex items-center gap-2 px-2 py-1 rounded-lg font-medium transition-all duration-200
+    flex items-center gap-2 px-2 h-10 rounded-lg font-medium transition-all duration-200
     ${(state.isComplete || (state.isRunning && !state.isPaused))
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg'
@@ -215,7 +194,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
 
           <button
             onClick={ handleReset }
-            className="flex items-center gap-2 px-2 py-1 rounded-lg font-medium bg-gray-500 hover:bg-gray-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
+            className="flex items-center gap-2 px-2 h-10 rounded-lg font-medium bg-gray-500 hover:bg-gray-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
@@ -224,6 +203,30 @@ export default function AlgorithmControls({ state, actions, board, words, select
           </button>
         </div>
       </div>
+
+      {/* Board size buttons */ }
+      <div>
+        <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Board Size</h3>
+        <div className="flex items-center justify-center gap-2">
+          { BOARD_CONFIGS.map((config) => (
+            <button
+              data-size={ config.id }
+              key={ config.id }
+              onClick={ (e) => handleSizeChange(e) }
+              className={ `
+          px-3 h-10 rounded-lg font-medium transition-all duration-200 text-sm
+          ${selectedBoardId === config.id
+                  ? 'bg-purple-500 text-white shadow-md border border-transparent'
+                  : 'bg-white text-gray-600 border border-gray-300 hover:border-purple-400 hover:text-purple-600'
+                }
+        `}
+            >
+              { config.name }
+            </button>
+          )) }
+        </div>
+      </div>
+
     </div>
   );
 }
