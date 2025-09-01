@@ -68,7 +68,7 @@ export default function AlgorithmDiagnostics({ algorithmState, wordsLength }: Pr
               Position: <span className="font-mono font-medium">{ formatPosition(stacks.positions.at(-1)) }</span>
             </div>
             <div className="text-gray-600">
-              Building: <span className="font-mono font-medium bg-yellow-50 px-1 rounded">
+              Building: <span className="font-mono font-medium px-1 rounded">
                 "{ stacks.words.at(-1) }" ({ stacks.words.at(-1)?.length ?? '0' })
               </span>
             </div>

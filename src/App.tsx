@@ -1,20 +1,17 @@
-import CrosswordGrid from './components/CrosswordGrid';
+import CrosswordBoard from './components/CrosswordBoard';
 import AlgorithmDiagnostics from './components/AlgorithmDiagnostics';
 import AlgorithmControls from './components/AlgorithmControls';
 import { useAlgorithmState } from './hooks/useAlgorithmState';
 import AlgorithmDashboard from './components/AlgorithmDashboard';
 import AlgorithmWords from './components/AlgorithmWords';
+import { BOARD_CONFIGS, DEFAULT_BOARD_ID } from './data/board';
+import { useState } from 'react';
 
 function App() {
   const [algorithmState, algorithmActions] = useAlgorithmState();
+  const [selectedBoardId, setSelectedBoardId] = useState<string>(DEFAULT_BOARD_ID);
 
-  const testBoard = [
-    ['C', 'A', 'U'],
-    ['P', 'R', 'A'],
-    ['R', 'E', 'D']
-  ];
-
-  const testWords = ['CAR', 'RAD', 'ERA'];
+  const currentBoard = BOARD_CONFIGS.find(config => config.id === selectedBoardId)!;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-500 to-blue-600 flex flex-col items-center justify-center gap-6 p-8">
@@ -22,24 +19,24 @@ function App() {
         <AlgorithmDashboard>
           <AlgorithmDiagnostics
             algorithmState={ algorithmState }
-            wordsLength={ testWords.length }
+            wordsLength={ currentBoard.words.length }
           />
           <AlgorithmWords
             algorithmState={ algorithmState }
-            wordsToFind={ testWords }
+            wordsToFind={ currentBoard.words }
           />
           <AlgorithmControls
             state={ algorithmState }
             actions={ algorithmActions }
-            board={ testBoard }
-            words={ testWords }
+            board={ currentBoard.board }
+            words={ currentBoard.words }
+            selectedBoardId={ selectedBoardId }
+            setSelectedBoardId={ setSelectedBoardId }
           />
-
         </AlgorithmDashboard>
 
-
-        <div className="w-full flex justify-center">
-          <CrosswordGrid grid={ testBoard } algorithmState={ algorithmState } />
+        <div className="w-full flex justify-center items-center h-72">
+          <CrosswordBoard board={ currentBoard.board } algorithmState={ algorithmState } />
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { BOARD_CONFIGS, DEFAULT_BOARD_ID } from '../data/board';
 import { useMemo, useState } from 'react';
 import { AlgorithmController } from '../algorithms/AlgorithmController';
 import { wordSearch } from '../algorithms/wordSearch';
@@ -8,19 +9,26 @@ interface AlgorithmControlsProps {
   actions: AlgorithmActions
   board: string[][];
   words: string[];
+  selectedBoardId: string;
+  setSelectedBoardId: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function AlgorithmControls({ state, actions, board, words }: AlgorithmControlsProps) {
-  const [SPEED_SLOW, SPEED_NORMAL, SPEED_FAST] = [2000, 1000, 500];
+export default function AlgorithmControls({ state, actions, board, words, selectedBoardId, setSelectedBoardId }: AlgorithmControlsProps) {
+  const [SPEED_VERY_SLOW, SPEED_SLOW, SPEED_NORMAL, SPEED_FAST, SPEED_VERY_FAST] = [3000, 2000, 1000, 250, 100];
 
   const controller = useMemo(() => new AlgorithmController(actions), []);
   const [speed, setSpeed] = useState<number>(SPEED_NORMAL);
-  const algorithmGenerator = wordSearch(board, words);
+  const algorithmGenerator = wordSearch(structuredClone(board), words);
 
   const handleSpeedChange = (e: React.MouseEvent<HTMLButtonElement>): void => {
     controller.reset();
     setSpeed(parseInt(e.currentTarget.dataset.speed ?? `${SPEED_NORMAL}`));
-  }
+  };
+
+  const handleSizeChange = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    controller.reset();
+    setSelectedBoardId(e.currentTarget.dataset.size ?? `${DEFAULT_BOARD_ID}`);
+  };
 
   const handlePlayPause = () => {
     if (state.isRunning && !state.isPaused) {
@@ -76,12 +84,26 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
         <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Speed</h3>
         <div className="flex items-center justify-center gap-2">
           <button
+            data-speed={ SPEED_VERY_SLOW }
+            onClick={ (e) => handleSpeedChange(e) }
+            className={ `
+        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        ${speed === SPEED_VERY_SLOW
+                ? 'bg-blue-500 text-white shadow-md border border-transparent'
+                : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
+              }
+      `}
+          >
+            Slowest
+          </button>
+
+          <button
             data-speed={ SPEED_SLOW }
             onClick={ (e) => handleSpeedChange(e) }
             className={ `
         px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_SLOW
-                ? 'bg-blue-500 text-white shadow-md'
+                ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
               }
       `}
@@ -94,7 +116,7 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
             className={ `
         px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_NORMAL
-                ? 'bg-blue-500 text-white shadow-md border-transparent'
+                ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
               }
       `}
@@ -107,18 +129,53 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
             className={ `
         px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
         ${speed === SPEED_FAST
-                ? 'bg-blue-500 text-white shadow-md'
+                ? 'bg-blue-500 text-white shadow-md border border-transparent'
                 : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
               }
       `}
           >
             Fast
           </button>
+          <button
+            data-speed={ SPEED_VERY_FAST }
+            onClick={ (e) => handleSpeedChange(e) }
+            className={ `
+        px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+        ${speed === SPEED_VERY_FAST
+                ? 'bg-blue-500 text-white shadow-md border border-transparent'
+                : 'bg-white text-gray-600 border border-gray-300 hover:border-blue-400 hover:text-blue-600'
+              }
+      `}
+          >
+            Fastest
+          </button>
+
+        </div>
+      </div>
+      <div>
+        <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Board Size</h3>
+        <div className="flex items-center justify-center gap-2">
+          { BOARD_CONFIGS.map((config) => (
+            <button
+              data-size={ config.id }
+              key={ config.id }
+              onClick={ (e) => handleSizeChange(e) }
+              className={ `
+          px-3 py-2 rounded-lg font-medium transition-all duration-200 text-sm
+          ${selectedBoardId === config.id
+                  ? 'bg-purple-500 text-white shadow-md border border-transparent'
+                  : 'bg-white text-gray-600 border border-gray-300 hover:border-purple-400 hover:text-purple-600'
+                }
+        `}
+            >
+              { config.name }
+            </button>
+          )) }
         </div>
       </div>
 
+      {/* Control buttons */ }
       <div className="flex flex-col">
-        {/* Play/Pause Button */ }
         <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Control</h3>
         <div className="flex items-center justify-center gap-2">
           <button
@@ -138,7 +195,6 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
             { getPlayPauseButtonText() }
           </button>
 
-          {/* Step Button */ }
           <button
             onClick={ handleStep }
             disabled={ state.isComplete || (state.isRunning && !state.isPaused) }
@@ -157,7 +213,6 @@ export default function AlgorithmControls({ state, actions, board, words }: Algo
             Step
           </button>
 
-          {/* Reset Button */ }
           <button
             onClick={ handleReset }
             className="flex items-center gap-2 px-2 py-1 rounded-lg font-medium bg-gray-500 hover:bg-gray-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
