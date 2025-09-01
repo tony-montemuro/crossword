@@ -1,69 +1,112 @@
-# React + TypeScript + Vite
+# Word Search II: Visualization
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interactive visualization of the LeetCode [Word Search II](https://leetcode.com/problems/word-search-ii/description/) algorithm, demonstrating DFS backtracking as it finds multiple words in a board of characters. The algorithm can either be stepped through manually, or executed automatically. Inspired by [an n-Queen visualizer](https://n-queen-five.vercel.app/).
 
-Currently, two official plugins are available:
+## Word Search II Algorithm
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This visualization is based on the following solution:
 
-## Expanding the ESLint configuration
+```javascript
+var TrieNode = function() {
+    this.children = new Map();
+    this.endOfWord = false;
+}
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+var Trie = function() {
+    this.head = new TrieNode();
+}
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Trie.prototype.insert = function(word) {
+    let curr = this.head;
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+    for (const c of word) {
+        let next = curr.children.get(c);
+        if (!next) {
+            next = new TrieNode();
+            curr.children.set(c, next);
+        }
+        curr = next;
+    }
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+    curr.endOfWord = true;
+}
+
+/**
+ * @param {character[][]} board
+ * @param {string[]} words
+ * @return {string[]}
+ */
+var findWords = function(board, words) {
+    const res = [];
+    const trie = new Trie();
+    for (const word of words) {
+        trie.insert(word);
+    }
+
+    function dfs(x, y, word, node) {
+        if (x < 0 || y < 0 || y === board.length || x === board[y].length || !node.children.get(board[y][x])) {
+            return;
+        }
+
+        const c = board[y][x];
+        const next = node.children.get(c);
+        word += c;
+        if (next.endOfWord) {
+            res.push(word);
+            next.endOfWord = false;
+        }
+
+        // mark current position as visited
+        board[y][x] = '#';
+
+        dfs(x+1, y, word, next);
+        dfs(x, y+1, word, next);
+        dfs(x-1, y, word, next);
+        dfs(x, y-1, word, next);
+
+        // backtrack
+        board[y][x] = c;
+    }
+
+    for (let y = 0; y < board.length; y++) {
+        for (let x = 0; x < board[y].length; x++) {
+            dfs(x, y, '', trie.head);
+        }
+    }
+
+    return res;
+};
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Developing
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Clone the repository onto your machine:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+    ```bash
+    git clone https://github.com/tony-montemuro/crossword.git
+
+    # or, if you are using ssh:
+    git clone git@github.com:tony-montemuro/crossword.git
+    ```
+
+2. Install dependencies:
+
+    ```bash
+    npm i
+    ```
+
+3. Run the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+## Building
+
+To create a production version of this app:
+
+```bash
+npm run build
 ```
+
+You can preview the production build with `npm run preview`.
