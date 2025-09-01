@@ -6,6 +6,7 @@ import AlgorithmDashboard from './components/AlgorithmDashboard';
 import AlgorithmWords from './components/AlgorithmWords';
 import { BOARD_CONFIGS, DEFAULT_BOARD_ID } from './data/board';
 import { useState } from 'react';
+import AlgorithmInformation from './components/AlgothimInformation';
 
 function App() {
   const [algorithmState, algorithmActions] = useAlgorithmState();
@@ -17,6 +18,7 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-green-500 to-blue-600 flex flex-col items-center justify-center gap-6 p-8">
       <div className="w-full max-w-4xl">
         <AlgorithmDashboard>
+          <AlgorithmInformation />
           <AlgorithmDiagnostics
             algorithmState={ algorithmState }
             wordsLength={ currentBoard.words.length }

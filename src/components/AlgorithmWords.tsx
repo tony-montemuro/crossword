@@ -24,7 +24,7 @@ export default function AlgorithmWords({ algorithmState, wordsToFind }: Props) {
 
   return (
     <div>
-      <div className="flex items-center gap-2 h-8">
+      <div className="flex items-center gap-2 h-16 sm:h-8">
         <span className="text-sm font-medium text-gray-700">Words to Find:</span>
         <div className="flex flex-wrap gap-1">
           { wordsToFind.filter(word => !foundWords.includes(word)).map(word => (

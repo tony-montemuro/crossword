@@ -4,7 +4,7 @@ import { AlgorithmController } from '../algorithms/AlgorithmController';
 import { wordSearch } from '../algorithms/wordSearch';
 import type { AlgorithmActions, AlgorithmState } from '../types/AlgorithmState';
 
-interface AlgorithmControlsProps {
+interface Props {
   state: AlgorithmState;
   actions: AlgorithmActions
   board: string[][];
@@ -13,7 +13,7 @@ interface AlgorithmControlsProps {
   setSelectedBoardId: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function AlgorithmControls({ state, actions, board, words, selectedBoardId, setSelectedBoardId }: AlgorithmControlsProps) {
+export default function AlgorithmControls({ state, actions, board, words, selectedBoardId, setSelectedBoardId }: Props) {
   const [SPEED_VERY_SLOW, SPEED_SLOW, SPEED_NORMAL, SPEED_FAST, SPEED_VERY_FAST] = [3000, 2000, 1000, 250, 100];
 
   const controller = useMemo(() => new AlgorithmController(actions), []);
@@ -77,12 +77,12 @@ export default function AlgorithmControls({ state, actions, board, words, select
   };
 
   return (
-    <div className="flex flex-row justify-between">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 justify-between">
 
       {/* Speed buttons */ }
       <div>
         <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Speed</h3>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex flex-wrap items-center lg:justify-center gap-2">
           <button
             data-speed={ SPEED_VERY_SLOW }
             onClick={ (e) => handleSpeedChange(e) }
@@ -156,7 +156,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
       {/* Control buttons */ }
       <div className="flex flex-col">
         <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Control</h3>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center lg:justify-center gap-2">
           <button
             onClick={ handlePlayPause }
             disabled={ state.isComplete }
@@ -207,7 +207,7 @@ export default function AlgorithmControls({ state, actions, board, words, select
       {/* Board size buttons */ }
       <div>
         <h3 className="text-sm font-semibold text-gray-700 uppercase mb-2">Board Size</h3>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center lg:justify-center gap-2">
           { BOARD_CONFIGS.map((config) => (
             <button
               data-size={ config.id }

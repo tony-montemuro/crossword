@@ -38,7 +38,12 @@ export default function AlgorithmDiagnostics({ algorithmState, wordsLength }: Pr
   const formatPath = () => {
     const positions = stacks.positions;
     if (positions.length === 0) return 'Empty';
-    return positions.map(pos => formatPosition(pos)).join('→');
+    return positions.map((pos, index) => {
+      const formatted = formatPosition(pos);
+      return (
+        <span key={ formatted } className="inline-block whitespace-nowrap">{ formatted }{ index < positions.length - 1 && '→' }</span>
+      );
+    });
   };
 
   return (
@@ -72,7 +77,7 @@ export default function AlgorithmDiagnostics({ algorithmState, wordsLength }: Pr
                 "{ stacks.words.at(-1) }" ({ stacks.words.at(-1)?.length ?? '0' })
               </span>
             </div>
-            <div className="text-gray-600">
+            <div className="text-gray-600 h-16 lg:h-auto">
               Path: <span className="font-mono font-medium text-xs">{ formatPath() }</span>
             </div>
           </div>
