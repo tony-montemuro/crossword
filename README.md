@@ -2,6 +2,8 @@
 
 Interactive visualization of the LeetCode [Word Search II](https://leetcode.com/problems/word-search-ii/description/) algorithm, demonstrating DFS backtracking as it finds multiple words in a board of characters. The algorithm can either be stepped through manually, or executed automatically. Inspired by [an n-Queen visualizer](https://n-queen-five.vercel.app/).
 
+I also [wrote an article about how this algorithm works](https://tonymontemuro.com/blog/word-search-ii-explained-how-dfs-backtracking-finds-multiple-words-in-a-grid).
+
 ## Word Search II Algorithm
 
 This visualization is based on the following solution:
